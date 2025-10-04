@@ -38,6 +38,7 @@ export interface Project {
   fullAddress?: string;
   size: string;
   totalBudget?: number;
+  videoUrl?: string;
   tasks: Task[];
   buildingInfo?: {
     buildingType: string;

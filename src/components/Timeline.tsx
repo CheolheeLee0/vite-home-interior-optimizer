@@ -15,6 +15,17 @@ const getStatusText = (status: Task['status']) => {
   }
 };
 
+const getDayOfWeek = (dateString: string) => {
+  const date = new Date(dateString);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  return days[date.getDay()];
+};
+
+const formatDateWithDay = (dateString: string) => {
+  const monthDay = dateString.substring(5);
+  return `${monthDay}(${getDayOfWeek(dateString)})`;
+};
+
 export default function Timeline({ tasks }: TimelineProps) {
   return (
     <div className="bg-white border border-gray-300 p-6">
@@ -43,8 +54,8 @@ export default function Timeline({ tasks }: TimelineProps) {
 
             {/* 일정 정보 */}
             <div className="text-xs text-gray-600 space-y-0.5 mb-2">
-              {task.startDate && <div>시작일: {task.startDate.substring(5)}</div>}
-              {task.endDate && <div>완료일: {task.endDate.substring(5)}</div>}
+              {task.startDate && <div>시작일: {formatDateWithDay(task.startDate)}</div>}
+              {task.endDate && <div>완료일: {formatDateWithDay(task.endDate)}</div>}
               {!task.startDate && !task.endDate && task.status === 'pending' && (
                 <div>일정 미정</div>
               )}

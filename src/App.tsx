@@ -8,7 +8,7 @@ import PhotoGallery from './components/PhotoGallery';
 import Calendar from './components/Calendar';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'timeline' | 'gallery'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'cost'>('overview');
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -85,7 +85,7 @@ function App() {
                 {projectData.buildingInfo && (
                   <div className="pt-1 border-t border-gray-200">
                     <p className="text-xs md:text-sm text-gray-600">
-                      {projectData.buildingInfo.buildingType} · {projectData.buildingInfo.totalUnits}세대 · {projectData.buildingInfo.buildYear} ({projectData.buildingInfo.buildAge}년차) · {' '}
+                      {projectData.buildingInfo.buildYear.split('.')[0]}년 ({projectData.buildingInfo.buildAge}년차) · {' '}
                       {projectData.buildingInfo.naverLink && (
                         <a
                           href={projectData.buildingInfo.naverLink}
@@ -102,6 +102,21 @@ function App() {
                 <p className="text-xs md:text-sm text-gray-700 pt-1">
                   35년 된 구축 빌라를 최적 비용으로 보수하여 세입자에게 만족스러운 거주경험을 제공하기 위한 프로젝트입니다.
                 </p>
+                {projectData.videoUrl && (
+                  <div className="pt-2">
+                    <a
+                      href={projectData.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-800 underline"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                      </svg>
+                      집 전체 상황 영상 보기
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
             <div className="text-left md:text-right">
@@ -121,37 +136,17 @@ function App() {
                   : 'border-transparent text-gray-600'
               }`}
             >
-              개요
+              인테리어 전체 과정
             </button>
             <button
-              onClick={() => setActiveTab('tasks')}
+              onClick={() => setActiveTab('cost')}
               className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
-                activeTab === 'tasks'
+                activeTab === 'cost'
                   ? 'border-gray-900 text-gray-900 font-medium'
                   : 'border-transparent text-gray-600'
               }`}
             >
-              작업 상세
-            </button>
-            <button
-              onClick={() => setActiveTab('timeline')}
-              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
-                activeTab === 'timeline'
-                  ? 'border-gray-900 text-gray-900 font-medium'
-                  : 'border-transparent text-gray-600'
-              }`}
-            >
-              타임라인
-            </button>
-            <button
-              onClick={() => setActiveTab('gallery')}
-              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
-                activeTab === 'gallery'
-                  ? 'border-gray-900 text-gray-900 font-medium'
-                  : 'border-transparent text-gray-600'
-              }`}
-            >
-              사진
+              비용
             </button>
           </nav>
         </div>
@@ -162,11 +157,8 @@ function App() {
         {/* 개요 탭 */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            {/* 진행상황 & 비용 그리드 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ProgressTracker tasks={projectData.tasks} />
-              <CostSummary tasks={projectData.tasks} totalBudget={projectData.totalBudget} />
-            </div>
+            {/* 진행상황 */}
+            <ProgressTracker tasks={projectData.tasks} />
 
             {/* 달력 */}
             <div>
@@ -189,37 +181,10 @@ function App() {
           </div>
         )}
 
-        {/* 작업 상세 탭 */}
-        {activeTab === 'tasks' && (
+        {/* 비용 탭 */}
+        {activeTab === 'cost' && (
           <div className="space-y-6">
-            {projectData.tasks.map((task, index) => (
-              <TaskCard key={task.id} task={task} index={index + 1} />
-            ))}
-          </div>
-        )}
-
-        {/* 타임라인 탭 */}
-        {activeTab === 'timeline' && (
-          <Timeline tasks={projectData.tasks} />
-        )}
-
-        {/* 갤러리 탭 */}
-        {activeTab === 'gallery' && (
-          <div className="space-y-6">
-            {projectData.tasks
-              .filter(task => task.images && task.images.length > 0)
-              .map(task => (
-                <PhotoGallery
-                  key={task.id}
-                  images={task.images || []}
-                  title={`${task.title} - 작업 사진`}
-                />
-              ))}
-            {allImages.length === 0 && (
-              <div className="bg-white border border-gray-300 p-6 text-center text-gray-600">
-                등록된 사진이 없습니다.
-              </div>
-            )}
+            <CostSummary tasks={projectData.tasks} totalBudget={projectData.totalBudget} />
           </div>
         )}
       </main>

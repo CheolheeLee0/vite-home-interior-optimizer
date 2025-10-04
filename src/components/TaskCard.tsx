@@ -16,6 +16,17 @@ const getStatusText = (status: TaskStatus) => {
   }
 };
 
+const getDayOfWeek = (dateString: string) => {
+  const date = new Date(dateString);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  return days[date.getDay()];
+};
+
+const formatDateWithDay = (dateString: string) => {
+  const monthDay = dateString.substring(5);
+  return `${monthDay}(${getDayOfWeek(dateString)})`;
+};
+
 export default function TaskCard({ task, index }: TaskCardProps) {
   return (
     <div className="bg-white border border-gray-300">
@@ -67,7 +78,7 @@ export default function TaskCard({ task, index }: TaskCardProps) {
                       href={material.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-2 text-xs text-gray-700 underline hover:text-gray-900"
+                      className="inline-block mt-2 text-xs text-blue-600 underline hover:text-blue-800"
                     >
                       제품 링크
                     </a>
@@ -79,20 +90,68 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         )}
 
         {/* 비용 정보 */}
-        {(task.estimatedCost || task.actualCost) && (
+        {(task.estimatedMaterialCost || task.actualMaterialCost || task.estimatedLaborCost || task.actualLaborCost) && (
           <div className="border-t border-gray-300 pt-3">
             <h4 className="text-sm font-semibold text-gray-900 mb-2">비용</h4>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              {task.estimatedCost && (
+            <div className="space-y-3">
+              {/* 자재비 */}
+              {(task.estimatedMaterialCost || task.actualMaterialCost) && (
                 <div>
-                  <div className="text-xs text-gray-600">예상 비용</div>
-                  <div className="font-medium text-gray-900">{task.estimatedCost.toLocaleString()}원</div>
+                  <div className="text-xs text-gray-600 mb-1">자재비</div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    {task.estimatedMaterialCost ? (
+                      <div>
+                        <div className="text-xs text-gray-500">예상</div>
+                        <div className="font-medium text-gray-900">{task.estimatedMaterialCost.toLocaleString()}원</div>
+                      </div>
+                    ) : <div></div>}
+                    {task.actualMaterialCost ? (
+                      <div>
+                        <div className="text-xs text-gray-500">실제</div>
+                        <div className="font-medium text-gray-900">{task.actualMaterialCost.toLocaleString()}원</div>
+                      </div>
+                    ) : <div></div>}
+                  </div>
                 </div>
               )}
-              {task.actualCost && (
+              {/* 시공비 */}
+              {(task.estimatedLaborCost || task.actualLaborCost) && (
                 <div>
-                  <div className="text-xs text-gray-600">실제 비용</div>
-                  <div className="font-medium text-gray-900">{task.actualCost.toLocaleString()}원</div>
+                  <div className="text-xs text-gray-600 mb-1">시공비</div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    {task.estimatedLaborCost ? (
+                      <div>
+                        <div className="text-xs text-gray-500">예상</div>
+                        <div className="font-medium text-gray-900">{task.estimatedLaborCost.toLocaleString()}원</div>
+                      </div>
+                    ) : <div></div>}
+                    {task.actualLaborCost ? (
+                      <div>
+                        <div className="text-xs text-gray-500">실제</div>
+                        <div className="font-medium text-gray-900">{task.actualLaborCost.toLocaleString()}원</div>
+                      </div>
+                    ) : <div></div>}
+                  </div>
+                </div>
+              )}
+              {/* 합계 */}
+              {(task.estimatedCost || task.actualCost) && (
+                <div className="pt-2 border-t border-gray-200">
+                  <div className="text-xs text-gray-600 mb-1">합계</div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    {task.estimatedCost ? (
+                      <div>
+                        <div className="text-xs text-gray-500">예상</div>
+                        <div className="font-bold text-gray-900">{task.estimatedCost.toLocaleString()}원</div>
+                      </div>
+                    ) : <div></div>}
+                    {task.actualCost ? (
+                      <div>
+                        <div className="text-xs text-gray-500">실제</div>
+                        <div className="font-bold text-gray-900">{task.actualCost.toLocaleString()}원</div>
+                      </div>
+                    ) : <div></div>}
+                  </div>
                 </div>
               )}
             </div>
@@ -102,8 +161,8 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         {/* 일정 */}
         {(task.startDate || task.endDate) && (
           <div className="text-xs text-gray-600">
-            {task.startDate && <div>시작일: {task.startDate.substring(5)}</div>}
-            {task.endDate && <div>완료일: {task.endDate.substring(5)}</div>}
+            {task.startDate && <div>시작일: {formatDateWithDay(task.startDate)}</div>}
+            {task.endDate && <div>완료일: {formatDateWithDay(task.endDate)}</div>}
           </div>
         )}
 
@@ -126,7 +185,7 @@ export default function TaskCard({ task, index }: TaskCardProps) {
               href={task.videoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block text-xs text-gray-700 underline hover:text-gray-900"
+              className="inline-block text-xs text-red-600 underline hover:text-red-800"
             >
               참고 영상 보기
             </a>
@@ -136,13 +195,13 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         {/* 이미지 갤러리 */}
         {task.images && task.images.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-2">참고 이미지</h4>
+            <h4 className="text-sm font-semibold text-gray-900 mb-2">참고사진</h4>
             <div className="grid grid-cols-2 gap-2">
               {task.images.map((image, i) => (
                 <img
                   key={i}
                   src={image}
-                  alt={`${task.title} 이미지 ${i + 1}`}
+                  alt={`${task.title} 사진 ${i + 1}`}
                   className="w-full border border-gray-300"
                 />
               ))}
