@@ -39,6 +39,9 @@ export const projectData: Project = {
         '도배 시공업자 구인',
         '장판 시공업자 구인'
       ],
+      estimatedCost: 0,
+      estimatedMaterialCost: 0,
+      estimatedLaborCost: 0,
       startDate: '2025-10-05',
       endDate: '2025-10-05',
       notes: [
@@ -91,6 +94,8 @@ export const projectData: Project = {
       ],
       estimatedCost: 450000,
       actualCost: 450000,
+      estimatedMaterialCost: 0,
+      actualMaterialCost: 0,
       estimatedLaborCost: 450000,
       actualLaborCost: 450000,
       startDate: '2025-10-07',
@@ -152,13 +157,19 @@ export const projectData: Project = {
         {
           name: 'PVC몰딩 천장몰딩 천정 문선 코너 계단 2단25 12Tx25x2400 나무무늬',
           url: 'https://smartstore.naver.com/mouldingstory/products/2988357161',
-          supplier: '네이버 스마트스토어 - mouldingstory'
+          supplier: '네이버 스마트스토어 - mouldingstory',
+          price: 80000,
+          quantity: 1,
+          unit: '식'
         }
       ],
+      estimatedCost: 180000,
+      estimatedMaterialCost: 80000,
       estimatedLaborCost: 100000,
+      actualLaborCost: 100000,
       startDate: '2025-10-16',
       endDate: '2025-10-16',
-      notes: ['📌 네이버쇼핑 자재 구매 전 단계', '자재비 계산 중', '시공비: 100,000원', '시공: ㅈㅈㅊ사장님', '자재 주문: 10/5']
+      notes: ['📌 네이버쇼핑 자재 구매 전 단계', '시공비: 100,000원', '시공: ㅈㅈㅊ사장님', '자재 주문: 10/5']
     },
     {
       id: 'wallpaper',
@@ -169,9 +180,16 @@ export const projectData: Project = {
         {
           name: '만능풀바른벽지 실크 셀프도배 도배지 붙이는 접착식 모던뉴트럴 WP1006-1 140cm',
           url: 'https://smartstore.naver.com/wallplan/products/344960685',
-          supplier: '네이버 스마트스토어 - wallplan'
+          supplier: '네이버 스마트스토어 - wallplan',
+          price: 250000,
+          quantity: 1,
+          unit: '식'
         }
       ],
+      estimatedCost: 650000,
+      estimatedMaterialCost: 250000,
+      estimatedLaborCost: 400000,
+      actualLaborCost: 0,
       videoUrl: 'https://www.youtube.com/watch?v=8VPdijy_ZDQ&t=235s',
       images: [
         '/interior_images/image.png',
@@ -181,7 +199,7 @@ export const projectData: Project = {
       ],
       startDate: '2025-10-17',
       endDate: '2025-10-19',
-      notes: ['👷 시공업자 구인 전 단계', '📏 도배 실측: 10/5', '자재 주문: 10/12', '셀프 시공']
+      notes: ['👷 시공업자 구인 전 단계', '📏 도배 실측: 10/5', '자재 주문: 10/12', '셀프 시공 (시공비 40만원 절감)']
     },
     {
       id: 'flooring',
@@ -192,33 +210,45 @@ export const projectData: Project = {
         {
           name: 'LX 모노륨 셀프 장판 시공 바닥장판 두꺼운 모노륨장판 20cm LX 우드 SS24133',
           url: 'https://smartstore.naver.com/flowall/products/309492432',
-          supplier: '네이버 스마트스토어 - flowall'
+          supplier: '네이버 스마트스토어 - flowall',
+          price: 200000,
+          quantity: 1,
+          unit: '식'
         },
         {
           name: '성남 화학 / 하우스풀 / 라이트우드 S18163',
           note: '대체 제품'
         }
       ],
+      estimatedCost: 500000,
+      estimatedMaterialCost: 200000,
+      estimatedLaborCost: 300000,
+      actualLaborCost: 0,
       images: ['/interior_images/image 4.png'],
       startDate: '2025-10-21',
       endDate: '2025-10-22',
-      notes: ['👷 시공업자 구인 전 단계', '📏 장판 실측: 10/5', '자재 주문: 10/14', '셀프 시공']
+      notes: ['👷 시공업자 구인 전 단계', '📏 장판 실측: 10/5', '자재 주문: 10/14', '셀프 시공 (시공비 30만원 절감)']
     },
     {
       id: 'baseboard',
       title: '걸레받이 설치',
       description: '걸레받이 설치 (ㅈㅈㅊ사장님)',
       status: 'pending',
+      estimatedCost: 150000,
+      estimatedMaterialCost: 50000,
       estimatedLaborCost: 100000,
+      actualLaborCost: 100000,
       startDate: '2025-10-23',
       endDate: '2025-10-23',
-      notes: ['📌 네이버쇼핑 자재 구매 전 단계', '자재비 계산 중', '시공비: 100,000원', '시공: ㅈㅈㅊ사장님', '자재 주문: 10/5']
+      notes: ['📌 네이버쇼핑 자재 구매 전 단계', '시공비: 100,000원', '시공: ㅈㅈㅊ사장님', '자재 주문: 10/5']
     },
     {
       id: 'cleaning',
       title: '입주청소',
       description: '전체 청소 및 마무리',
       status: 'pending',
+      estimatedCost: 150000,
+      estimatedMaterialCost: 0,
       estimatedLaborCost: 150000,
       startDate: '2025-10-24',
       endDate: '2025-10-24',

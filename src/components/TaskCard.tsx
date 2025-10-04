@@ -4,6 +4,7 @@ import type { Task, TaskStatus } from '../types';
 interface TaskCardProps {
   task: Task;
   index: number;
+  showCost?: boolean;
 }
 
 const getStatusText = (status: TaskStatus) => {
@@ -57,7 +58,7 @@ const saveCompletedSubtasks = (taskId: string, completedIndexes: number[]) => {
   }
 };
 
-export default function TaskCard({ task, index }: TaskCardProps) {
+export default function TaskCard({ task, index, showCost = false }: TaskCardProps) {
   const [completedSubtasks, setCompletedSubtasks] = useState<number[]>([]);
 
   // 컴포넌트 마운트 시 로컬스토리지에서 상태 로드
@@ -155,7 +156,7 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         )}
 
         {/* 비용 정보 */}
-        {(task.estimatedMaterialCost || task.actualMaterialCost || task.estimatedLaborCost || task.actualLaborCost) && (
+        {showCost && (task.estimatedMaterialCost || task.actualMaterialCost || task.estimatedLaborCost || task.actualLaborCost) && (
           <div className="border-t border-gray-300 pt-3">
             <h4 className="text-sm font-semibold text-gray-900 mb-2">비용</h4>
             <div className="space-y-3">

@@ -1,23 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { projectData } from './data/projectData';
 import ProgressTracker from './components/ProgressTracker';
 import CostSummary from './components/CostSummary';
-import Timeline from './components/Timeline';
 import TaskCard from './components/TaskCard';
-import PhotoGallery from './components/PhotoGallery';
 import Calendar from './components/Calendar';
+import OptimizationReport from './components/OptimizationReport';
+
+const PASSWORD = '13567895';
+const STORAGE_KEY = 'interior-password-auth';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'cost'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'cost' | 'optimization'>('overview');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
+
+  // 컴포넌트 마운트 시 인증 상태 로드
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === PASSWORD) {
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error('Failed to load auth status:', error);
+    }
+  }, []);
+
+  // 비밀번호 확인
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem(STORAGE_KEY, PASSWORD);
+      setPasswordInput('');
+      setShowPasswordInput(false);
+    } else {
+      alert('비밀번호가 올바르지 않습니다.');
+      setPasswordInput('');
+    }
+  };
+
+  // 로그아웃
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem(STORAGE_KEY);
+    setActiveTab('overview');
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
-
-  // 모든 이미지 수집
-  const allImages = projectData.tasks
-    .flatMap(task => task.images || [])
-    .filter(img => img);
 
   // 현재 한국 시간
   const currentDate = new Date().toLocaleString('ko-KR', {
@@ -120,8 +153,58 @@ function App() {
               </div>
             </div>
             <div className="text-left md:text-right">
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 mb-2">
                 업데이트: {currentDate}
+              </div>
+              {/* 비밀번호 인증 UI */}
+              <div className="flex items-center gap-2 justify-start md:justify-end">
+                {!isAuthenticated ? (
+                  showPasswordInput ? (
+                    <form onSubmit={handlePasswordSubmit} className="flex items-center gap-2">
+                      <input
+                        type="password"
+                        value={passwordInput}
+                        onChange={(e) => setPasswordInput(e.target.value)}
+                        placeholder="비밀번호"
+                        className="px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-gray-900"
+                        autoFocus
+                      />
+                      <button
+                        type="submit"
+                        className="px-2 py-1 text-xs bg-gray-900 text-white hover:bg-gray-700"
+                      >
+                        확인
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowPasswordInput(false);
+                          setPasswordInput('');
+                        }}
+                        className="px-2 py-1 text-xs border border-gray-300 hover:bg-gray-100"
+                      >
+                        취소
+                      </button>
+                    </form>
+                  ) : (
+                    <button
+                      onClick={() => setShowPasswordInput(true)}
+                      className="px-3 py-1 text-xs border border-gray-400 text-gray-700 hover:bg-gray-100"
+                    >
+                      🔒 비용 정보 보기
+                    </button>
+                  )
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-green-700">✓ 비용 정보 인증됨</span>
+                    <button
+                      onClick={handleLogout}
+                      className="px-2 py-1 text-xs border border-gray-300 text-gray-600 hover:bg-gray-100"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -138,16 +221,30 @@ function App() {
             >
               인테리어 전체 과정
             </button>
-            <button
-              onClick={() => setActiveTab('cost')}
-              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
-                activeTab === 'cost'
-                  ? 'border-gray-900 text-gray-900 font-medium'
-                  : 'border-transparent text-gray-600'
-              }`}
-            >
-              비용
-            </button>
+            {isAuthenticated && (
+              <>
+                <button
+                  onClick={() => setActiveTab('cost')}
+                  className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
+                    activeTab === 'cost'
+                      ? 'border-gray-900 text-gray-900 font-medium'
+                      : 'border-transparent text-gray-600'
+                  }`}
+                >
+                  비용
+                </button>
+                <button
+                  onClick={() => setActiveTab('optimization')}
+                  className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
+                    activeTab === 'optimization'
+                      ? 'border-gray-900 text-gray-900 font-medium'
+                      : 'border-transparent text-gray-600'
+                  }`}
+                >
+                  비용 최적화 가이드
+                </button>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -174,7 +271,7 @@ function App() {
               <h2 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-300">작업 목록</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {projectData.tasks.map((task, index) => (
-                  <TaskCard key={task.id} task={task} index={index + 1} />
+                  <TaskCard key={task.id} task={task} index={index + 1} showCost={isAuthenticated} />
                 ))}
               </div>
             </div>
@@ -186,6 +283,11 @@ function App() {
           <div className="space-y-6">
             <CostSummary tasks={projectData.tasks} totalBudget={projectData.totalBudget} />
           </div>
+        )}
+
+        {/* 비용 최적화 가이드 탭 */}
+        {activeTab === 'optimization' && (
+          <OptimizationReport tasks={projectData.tasks} totalBudget={projectData.totalBudget} />
         )}
       </main>
 
