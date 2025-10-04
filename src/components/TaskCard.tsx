@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { Task, TaskStatus } from '../types';
 
 interface TaskCardProps {
@@ -27,7 +28,53 @@ const formatDateWithDay = (dateString: string) => {
   return `${monthDay}(${getDayOfWeek(dateString)})`;
 };
 
+// 로컬스토리지 키
+const STORAGE_KEY = 'interior-subtasks-status';
+
+// 로컬스토리지에서 완료된 subtask 상태 가져오기
+const getCompletedSubtasks = (taskId: string): number[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data[taskId] || [];
+    }
+  } catch (error) {
+    console.error('Failed to load subtask status:', error);
+  }
+  return [];
+};
+
+// 로컬스토리지에 완료된 subtask 상태 저장
+const saveCompletedSubtasks = (taskId: string, completedIndexes: number[]) => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    const data = stored ? JSON.parse(stored) : {};
+    data[taskId] = completedIndexes;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Failed to save subtask status:', error);
+  }
+};
+
 export default function TaskCard({ task, index }: TaskCardProps) {
+  const [completedSubtasks, setCompletedSubtasks] = useState<number[]>([]);
+
+  // 컴포넌트 마운트 시 로컬스토리지에서 상태 로드
+  useEffect(() => {
+    setCompletedSubtasks(getCompletedSubtasks(task.id));
+  }, [task.id]);
+
+  // 체크박스 토글 핸들러
+  const handleToggleSubtask = (subtaskIndex: number) => {
+    const newCompleted = completedSubtasks.includes(subtaskIndex)
+      ? completedSubtasks.filter(i => i !== subtaskIndex)
+      : [...completedSubtasks, subtaskIndex];
+
+    setCompletedSubtasks(newCompleted);
+    saveCompletedSubtasks(task.id, newCompleted);
+  };
+
   return (
     <div className="bg-white border border-gray-300">
       {/* 헤더 */}
@@ -51,9 +98,27 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         {task.subtasks && task.subtasks.length > 0 && (
           <div>
             <h4 className="text-sm font-semibold text-gray-900 mb-2">세부 작업</h4>
-            <ul className="space-y-1 text-sm text-gray-700">
+            <ul className="space-y-2 text-sm">
               {task.subtasks.map((subtask, i) => (
-                <li key={i} className="pl-4">- {subtask}</li>
+                <li key={i} className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    id={`${task.id}-subtask-${i}`}
+                    checked={completedSubtasks.includes(i)}
+                    onChange={() => handleToggleSubtask(i)}
+                    className="mt-0.5 w-4 h-4 cursor-pointer accent-gray-900"
+                  />
+                  <label
+                    htmlFor={`${task.id}-subtask-${i}`}
+                    className={`cursor-pointer flex-1 ${
+                      completedSubtasks.includes(i)
+                        ? 'text-gray-400 line-through'
+                        : 'text-gray-700'
+                    }`}
+                  >
+                    {subtask}
+                  </label>
+                </li>
               ))}
             </ul>
           </div>
