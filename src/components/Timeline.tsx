@@ -43,8 +43,8 @@ export default function Timeline({ tasks }: TimelineProps) {
 
             {/* 일정 정보 */}
             <div className="text-xs text-gray-600 space-y-0.5 mb-2">
-              {task.startDate && <div>시작일: {task.startDate}</div>}
-              {task.endDate && <div>완료일: {task.endDate}</div>}
+              {task.startDate && <div>시작일: {task.startDate.substring(5)}</div>}
+              {task.endDate && <div>완료일: {task.endDate.substring(5)}</div>}
               {!task.startDate && !task.endDate && task.status === 'pending' && (
                 <div>일정 미정</div>
               )}

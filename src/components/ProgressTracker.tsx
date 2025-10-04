@@ -33,7 +33,9 @@ const getDayOfWeek = (dateString: string) => {
 };
 
 const formatDateWithDay = (dateString: string) => {
-  return `${dateString}(${getDayOfWeek(dateString)})`;
+  // "2025-10-03" -> "10-03"
+  const monthDay = dateString.substring(5); // "10-03"
+  return `${monthDay}(${getDayOfWeek(dateString)})`;
 };
 
 export default function ProgressTracker({ tasks }: ProgressTrackerProps) {

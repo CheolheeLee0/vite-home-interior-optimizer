@@ -102,8 +102,8 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         {/* 일정 */}
         {(task.startDate || task.endDate) && (
           <div className="text-xs text-gray-600">
-            {task.startDate && <div>시작일: {task.startDate}</div>}
-            {task.endDate && <div>완료일: {task.endDate}</div>}
+            {task.startDate && <div>시작일: {task.startDate.substring(5)}</div>}
+            {task.endDate && <div>완료일: {task.endDate.substring(5)}</div>}
           </div>
         )}
 

@@ -71,7 +71,7 @@ export default function Calendar({ tasks, year, month }: CalendarProps) {
   return (
     <div className="bg-white border border-gray-300 p-6">
       <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-300">
-        {year}년 {month}월
+        {month}월
       </h3>
 
       <div className="overflow-x-auto">
