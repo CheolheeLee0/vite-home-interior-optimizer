@@ -1,142 +1,239 @@
+import { useState } from 'react';
+import { projectData } from './data/projectData';
+import ProgressTracker from './components/ProgressTracker';
+import CostSummary from './components/CostSummary';
+import Timeline from './components/Timeline';
+import TaskCard from './components/TaskCard';
+import PhotoGallery from './components/PhotoGallery';
+import Calendar from './components/Calendar';
+
 function App() {
+  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'timeline' | 'gallery'>('overview');
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
+  // 모든 이미지 수집
+  const allImages = projectData.tasks
+    .flatMap(task => task.images || [])
+    .filter(img => img);
+
+  // 현재 한국 시간
+  const currentDate = new Date().toLocaleString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">인테리어 작업 계획서</h1>
-          <p className="text-gray-600 mt-2">대전 서구 내동 28-3 신일빌라 B동 401호</p>
+      <header className="bg-white border-b-2 border-gray-900">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+            <div className="flex-1">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+                {projectData.name}
+              </h1>
+              <div className="mt-2 space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <span className="text-xs text-gray-500 w-12 flex-shrink-0 pt-0.5">전체주소</span>
+                  <div className="flex items-center gap-2 flex-1">
+                    <p className="text-sm text-gray-600">
+                      {projectData.fullAddress || projectData.address}
+                    </p>
+                    <button
+                      onClick={() => copyToClipboard(projectData.fullAddress || projectData.address)}
+                      className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                      title="주소 복사"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-xs text-gray-500 w-12 flex-shrink-0 pt-0.5">면적</span>
+                  <p className="text-sm text-gray-600">{projectData.size}</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-xs text-gray-500 w-12 flex-shrink-0 pt-0.5">연락처</span>
+                  <div className="flex items-center gap-2 flex-1">
+                    <p className="text-sm text-gray-900 font-medium">
+                      010-3919-0167
+                    </p>
+                    <button
+                      onClick={() => copyToClipboard('010-3919-0167')}
+                      className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                      title="전화번호 복사"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-xs text-gray-500 w-12 flex-shrink-0 pt-0.5">비밀번호</span>
+                  <p className="text-sm text-gray-600">위 연락처에 문의</p>
+                </div>
+                {projectData.buildingInfo && (
+                  <div className="pt-1 border-t border-gray-200">
+                    <p className="text-xs md:text-sm text-gray-600">
+                      {projectData.buildingInfo.buildingType} · {projectData.buildingInfo.totalUnits}세대 · {projectData.buildingInfo.buildYear} ({projectData.buildingInfo.buildAge}년차) · {' '}
+                      {projectData.buildingInfo.naverLink && (
+                        <a
+                          href={projectData.buildingInfo.naverLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          네이버 부동산 링크
+                        </a>
+                      )}
+                    </p>
+                  </div>
+                )}
+                <p className="text-xs md:text-sm text-gray-700 pt-1">
+                  35년 된 구축 빌라를 최적 비용으로 보수하여 세입자에게 만족스러운 거주경험을 제공하기 위한 프로젝트입니다.
+                </p>
+              </div>
+            </div>
+            <div className="text-left md:text-right">
+              <div className="text-xs text-gray-500">
+                업데이트: {currentDate}
+              </div>
+            </div>
+          </div>
+
+          {/* 탭 네비게이션 */}
+          <nav className="mt-4 flex gap-0 border-b border-gray-300 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
+                activeTab === 'overview'
+                  ? 'border-gray-900 text-gray-900 font-medium'
+                  : 'border-transparent text-gray-600'
+              }`}
+            >
+              개요
+            </button>
+            <button
+              onClick={() => setActiveTab('tasks')}
+              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
+                activeTab === 'tasks'
+                  ? 'border-gray-900 text-gray-900 font-medium'
+                  : 'border-transparent text-gray-600'
+              }`}
+            >
+              작업 상세
+            </button>
+            <button
+              onClick={() => setActiveTab('timeline')}
+              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
+                activeTab === 'timeline'
+                  ? 'border-gray-900 text-gray-900 font-medium'
+                  : 'border-transparent text-gray-600'
+              }`}
+            >
+              타임라인
+            </button>
+            <button
+              onClick={() => setActiveTab('gallery')}
+              className={`px-3 md:px-4 py-2 text-xs md:text-sm border-b-2 whitespace-nowrap ${
+                activeTab === 'gallery'
+                  ? 'border-gray-900 text-gray-900 font-medium'
+                  : 'border-transparent text-gray-600'
+              }`}
+            >
+              사진
+            </button>
+          </nav>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* 작업 요약 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">작업 요약</h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>철거 (18평)</li>
-          </ul>
-        </section>
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* 개요 탭 */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* 진행상황 & 비용 그리드 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ProgressTracker tasks={projectData.tasks} />
+              <CostSummary tasks={projectData.tasks} totalBudget={projectData.totalBudget} />
+            </div>
 
-        {/* 철거 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">1. 철거 (18평)</h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>싱크대 철거</li>
-            <li>몰딩 철거</li>
-            <li>걸레받이 철거</li>
-            <li>장판 철거</li>
-            <li>청소 및 정리</li>
-          </ul>
-        </section>
+            {/* 달력 */}
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-300">작업 일정</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Calendar tasks={projectData.tasks} year={2025} month={10} />
+                <Calendar tasks={projectData.tasks} year={2025} month={11} />
+              </div>
+            </div>
 
-        {/* 싱크대 교체 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">2. 싱크대 교체</h2>
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">국산 인조대리석 2.4M 싱크대</h3>
-            <a
-              href="https://smartstore.naver.com/ttkitchen/products/10069120391?nl-query=%EC%8B%B1%ED%81%AC%EB%8C%80&nl-au=e5eb6ef50eec4965b5e9964cc6f82573&NaPm=ci%3De5eb6ef50eec4965b5e9964cc6f82573%7Cct%3Dmgakojb7%7Ctr%3Dnslsl%7Csn%3D10558674%7Chk%3D14e9a501c0f1e33d19a0a3e12a248916679f072a"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline break-all"
-            >
-              제품 보기
-            </a>
+            {/* 작업 카드 그리드 */}
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-300">작업 목록</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {projectData.tasks.map((task, index) => (
+                  <TaskCard key={task.id} task={task} index={index + 1} />
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
-            <p className="text-gray-700">가스대 → 조리대로 변경하고</p>
-            <p className="text-gray-700">빌트인 가스레인지 추가 필요 (LNG, LPG 결정 필요)</p>
-          </div>
-        </section>
+        )}
 
-        {/* 몰딩 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">3. 몰딩</h2>
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">PVC몰딩 천장몰딩 천정 문선 코너 계단 2단25 12Tx25x2400 나무무늬</h3>
-            <a
-              href="https://smartstore.naver.com/mouldingstory/products/2988357161?nl-query=%EC%B2%9C%EC%9E%A5%20%EB%AA%B0%EB%94%A9&nl-au=708054636baa42c5bed611f4b6f2432f&NaPm=ci%3D708054636baa42c5bed611f4b6f2432f%7Cct%3Dmgcgahec%7Ctr%3Dnslsl%7Csn%3D709998%7Chk%3Dcc53ad558bbd4549da88b89706d1b48b2f8bef4d"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline break-all"
-            >
-              제품 보기
-            </a>
+        {/* 작업 상세 탭 */}
+        {activeTab === 'tasks' && (
+          <div className="space-y-6">
+            {projectData.tasks.map((task, index) => (
+              <TaskCard key={task.id} task={task} index={index + 1} />
+            ))}
           </div>
-          <p className="text-gray-700 bg-gray-100 p-3 rounded">몰딩 거리 계산 실측 진행</p>
-        </section>
+        )}
 
-        {/* 도배 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">4. 도배</h2>
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">만능풀바른벽지 실크 셀프도배 도배지 붙이는 접착식 모던뉴트럴 WP1006-1 140cm</h3>
-            <a
-              href="https://smartstore.naver.com/wallplan/products/344960685?nl-query=%EB%8F%84%EB%B0%B0&nl-au=8bc880ff7b2c4ed0955166188663d171&NaPm=ci%3D8bc880ff7b2c4ed0955166188663d171%7Cct%3Dmgcf2epn%7Ctr%3Dnslsl%7Csn%3D225072%7Chk%3D72ac6944843d7926c42ea8d57bf213a36d41f6c2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline break-all mb-2 block"
-            >
-              제품 보기
-            </a>
-            <a
-              href="https://www.youtube.com/watch?v=8VPdijy_ZDQ&t=235s"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline block"
-            >
-              도배 설명 동영상 보기
-            </a>
-          </div>
-          <p className="text-gray-700 bg-gray-100 p-3 rounded mb-4">도배 실측 진행</p>
+        {/* 타임라인 탭 */}
+        {activeTab === 'timeline' && (
+          <Timeline tasks={projectData.tasks} />
+        )}
 
-          {/* 도배 이미지 갤러리 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <img src="/interior_images/image.png" alt="도배 샘플 1" className="w-full rounded-lg shadow-md" />
-            <img src="/interior_images/image 1.png" alt="도배 샘플 2" className="w-full rounded-lg shadow-md" />
-            <img src="/interior_images/image 2.png" alt="도배 샘플 3" className="w-full rounded-lg shadow-md" />
-            <img src="/interior_images/image 3.png" alt="도배 샘플 4" className="w-full rounded-lg shadow-md" />
+        {/* 갤러리 탭 */}
+        {activeTab === 'gallery' && (
+          <div className="space-y-6">
+            {projectData.tasks
+              .filter(task => task.images && task.images.length > 0)
+              .map(task => (
+                <PhotoGallery
+                  key={task.id}
+                  images={task.images || []}
+                  title={`${task.title} - 작업 사진`}
+                />
+              ))}
+            {allImages.length === 0 && (
+              <div className="bg-white border border-gray-300 p-6 text-center text-gray-600">
+                등록된 사진이 없습니다.
+              </div>
+            )}
           </div>
-        </section>
-
-        {/* 장판 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">5. 장판</h2>
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">LX 모노륨 셀프 장판 시공 바닥장판 두꺼운 모노륨장판 20cm LX 우드 SS24133</h3>
-            <a
-              href="https://smartstore.naver.com/flowall/products/309492432?nl-query=%EC%9E%A5%ED%8C%90&nl-au=5180fc6e3d804daa91229ca0ed9e4068&NaPm=ci%3D5180fc6e3d804daa91229ca0ed9e4068%7Cct%3Dmgcaj1a4%7Ctr%3Dnslsl%7Csn%3D236952%7Chk%3D8e271e716e554cc929ec181ec0f5c5b4f6bba462"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline break-all"
-            >
-              제품 보기
-            </a>
-          </div>
-          <p className="text-gray-700 bg-gray-100 p-3 rounded mb-4">신일빌라 장판 실측 진행</p>
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
-            <p className="text-gray-700 font-semibold">성남 화학 / 하우스풀 / 라이트우드 S18163 제품</p>
-          </div>
-          <img src="/interior_images/image 4.png" alt="장판 샘플" className="max-w-md rounded-lg shadow-md" />
-        </section>
-
-        {/* 걸레받이 */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">6. 걸레받이</h2>
-          <p className="text-gray-700 bg-gray-100 p-3 rounded">걸레받이 실측 진행</p>
-        </section>
+        )}
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t mt-12">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-center text-gray-600">
-          <p>인테리어 작업 계획서</p>
+      <footer className="bg-white border-t border-gray-300 mt-12">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="text-center text-gray-600 text-sm">
+            <p>{projectData.name}</p>
+          </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
