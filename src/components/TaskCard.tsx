@@ -209,31 +209,31 @@ export default function TaskCard({ task, index, showCost = false }: TaskCardProp
                     <div className="grid grid-cols-12 gap-0">
                       <div className="col-span-3 border-2 border-gray-800 border-l-0 h-32 flex items-center justify-center">
                         <div className="text-center px-1">
-                          <div className="text-gray-800 font-semibold text-xs">조리대 600</div>
+                          <div className="text-gray-800 font-semibold text-xs mb-1">조리대 600</div>
+                          <div className="text-xs text-gray-500">(117,800원)</div>
                         </div>
                       </div>
                       <div className="col-span-6 border-2 border-gray-800 border-l-0 h-32 flex items-center justify-center">
                         <div className="text-center px-1">
                           <div className="text-gray-800 font-semibold text-xs mb-1">개수대1200서랍</div>
                           <div className="text-gray-800 font-semibold text-xs mb-1">(우서랍,중앙볼)</div>
+                          <div className="text-xs text-gray-500 mb-1">(237,800원)</div>
                           <div className="text-gray-800 text-xs mb-1">‣ 싱크볼: LDSC850</div>
                           <div className="text-xs text-gray-500">(68,000원)</div>
                         </div>
                       </div>
                       <div className="col-span-3 border-2 border-gray-800 border-l-0 h-32 flex items-center justify-center">
                         <div className="text-center px-1">
-                          <div className="text-gray-800 font-semibold text-xs">가스대 600</div>
+                          <div className="text-gray-800 font-semibold text-xs mb-1">조리대 600</div>
+                          <div className="text-gray-800 text-xs mb-1">가스3구</div>
+                          <div className="text-gray-800 text-xs mb-1">(hsgc-e330/lng도시가스)</div>
+                          <div className="text-xs text-gray-500">(117,800원 + 148,000원)</div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* 하부장 가격 */}
-            <div className="text-right mb-4">
-              <span className="text-xs text-gray-500">하부장 2.4m: 578,400원</span>
             </div>
 
             {/* 제품구성 Title */}
@@ -251,7 +251,7 @@ export default function TaskCard({ task, index, showCost = false }: TaskCardProp
                   가구/상판
                 </div>
                 <div className="col-span-3 p-3 text-xs text-gray-700">
-                  <span className="font-semibold">가구</span> 키큰장(렌지수납장), 조리대600, 개수대1200서랍(우서랍, 중앙볼), 가스대 600, 걸레받이2400, 측면걸레받이x2, 걸레받이600(키큰장전용)
+                  <span className="font-semibold">가구</span> 키큰장(렌지수납장), 조리대600, 개수대1200서랍(우서랍, 중앙볼), 조리대600, 걸레받이2400, 측면걸레받이x2, 걸레받이600(키큰장전용)
                   <span className="font-semibold ml-2">인조대리석 색상</span> 아티스
                   <span className="font-semibold ml-2">장(몸통) 색상</span> 화이트
                   <span className="font-semibold ml-2">손잡이 색상</span> 화이트
@@ -268,6 +268,11 @@ export default function TaskCard({ task, index, showCost = false }: TaskCardProp
                   <span className="font-semibold ml-2">수전</span> 미선택
                   <span className="font-semibold ml-2">칼꽂이</span> <span className="text-xs text-gray-500">(5,000원)</span>
                   <span className="font-semibold ml-2">뒷선반</span> 2400 <span className="text-xs text-gray-500">(48,000원)</span>
+                  <span className="font-semibold ml-2">가스3구</span> hsgc-e330/lng도시가스 <span className="text-xs text-gray-500">(148,000원)</span>
+                  <span className="font-semibold ml-2">걸레받이</span> 2400mm <span className="text-xs text-gray-500">(27,000원)</span>
+                  <span className="font-semibold ml-2">걸레받이</span> 600mm <span className="text-xs text-gray-500">(9,000원)</span>
+                  <span className="font-semibold ml-2">측면걸레받이</span> <span className="text-xs text-gray-500">(5,000원)</span>
+                  <span className="font-semibold ml-2">그릇망</span> wbl-290 <span className="text-xs text-gray-500">(9,000원)</span>
                 </div>
               </div>
             </div>
@@ -277,8 +282,8 @@ export default function TaskCard({ task, index, showCost = false }: TaskCardProp
               <div className="flex justify-between items-center">
                 <span className="text-sm font-semibold text-gray-800">총 상품 금액</span>
                 <div className="text-right">
-                  <div className="text-xs text-gray-600">총 수량 9개</div>
-                  <div className="text-lg font-bold text-blue-600">1,314,600원</div>
+                  <div className="text-xs text-gray-600">총 수량 16개</div>
+                  <div className="text-lg font-bold text-blue-600">1,407,600원</div>
                 </div>
               </div>
             </div>
