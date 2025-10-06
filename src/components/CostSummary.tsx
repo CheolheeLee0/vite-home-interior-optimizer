@@ -59,60 +59,98 @@ export default function CostSummary({ tasks, totalBudget }: CostSummaryProps) {
         )}
       </div>
 
-      {/* 작업별 비용 테이블 */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-300">
-              <th className="text-left py-2 px-2 font-semibold text-gray-700">작업</th>
-              <th className="text-right py-2 px-2 font-semibold text-gray-700">예상 자재비</th>
-              <th className="text-right py-2 px-2 font-semibold text-gray-700">실제 자재비</th>
-              <th className="text-right py-2 px-2 font-semibold text-gray-700">예상 시공비</th>
-              <th className="text-right py-2 px-2 font-semibold text-gray-700">실제 시공비</th>
-              <th className="text-right py-2 px-2 font-semibold text-gray-700">합계</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map(task => {
-              const estimatedMaterial = task.estimatedMaterialCost || 0;
-              const actualMaterial = task.actualMaterialCost || 0;
-              const estimatedLabor = task.estimatedLaborCost || 0;
-              const actualLabor = task.actualLaborCost || 0;
-              const actualTotal = actualMaterial + actualLabor;
+      {/* 예상 비용 테이블 */}
+      <div className="mb-6">
+        <h3 className="text-base font-bold text-gray-900 mb-3">예상 비용</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-300">
+                <th className="text-left py-2 px-2 font-semibold text-gray-700">작업</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-700">자재비</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-700">시공비</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-700">합계</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.map(task => {
+                const estimatedMaterial = task.estimatedMaterialCost || 0;
+                const estimatedLabor = task.estimatedLaborCost || 0;
+                const estimatedTotal = estimatedMaterial + estimatedLabor;
 
-              return (
-                <tr key={task.id} className="border-b border-gray-200">
-                  <td className="py-2 px-2 text-gray-800">{task.title}</td>
-                  <td className="py-2 px-2 text-right text-gray-600">
-                    {estimatedMaterial > 0 ? `${estimatedMaterial.toLocaleString()}` : '-'}
-                  </td>
-                  <td className="py-2 px-2 text-right text-gray-800 font-medium">
-                    {actualMaterial > 0 ? `${actualMaterial.toLocaleString()}` : '-'}
-                  </td>
-                  <td className="py-2 px-2 text-right text-gray-600">
-                    {estimatedLabor > 0 ? `${estimatedLabor.toLocaleString()}` : '-'}
-                  </td>
-                  <td className="py-2 px-2 text-right text-gray-800 font-medium">
-                    {actualLabor > 0 ? `${actualLabor.toLocaleString()}` : '-'}
-                  </td>
-                  <td className="py-2 px-2 text-right text-gray-900 font-bold">
-                    {actualTotal > 0 ? `${actualTotal.toLocaleString()}` : '-'}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            <tr className="border-t-2 border-gray-400 font-bold">
-              <td className="py-2 px-2 text-gray-900">합계</td>
-              <td className="py-2 px-2 text-right text-gray-900">{totalEstimatedMaterial.toLocaleString()}</td>
-              <td className="py-2 px-2 text-right text-gray-900">{totalActualMaterial.toLocaleString()}</td>
-              <td className="py-2 px-2 text-right text-gray-900">{totalEstimatedLabor.toLocaleString()}</td>
-              <td className="py-2 px-2 text-right text-gray-900">{totalActualLabor.toLocaleString()}</td>
-              <td className="py-2 px-2 text-right text-gray-900">{totalActual.toLocaleString()}</td>
-            </tr>
-          </tfoot>
-        </table>
+                return (
+                  <tr key={task.id} className="border-b border-gray-200">
+                    <td className="py-2 px-2 text-gray-800">{task.title}</td>
+                    <td className="py-2 px-2 text-right text-gray-600">
+                      {estimatedMaterial > 0 ? `${estimatedMaterial.toLocaleString()}` : '-'}
+                    </td>
+                    <td className="py-2 px-2 text-right text-gray-600">
+                      {estimatedLabor > 0 ? `${estimatedLabor.toLocaleString()}` : '-'}
+                    </td>
+                    <td className="py-2 px-2 text-right text-gray-900 font-bold">
+                      {estimatedTotal > 0 ? `${estimatedTotal.toLocaleString()}` : '-'}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-gray-400 font-bold">
+                <td className="py-2 px-2 text-gray-900">합계</td>
+                <td className="py-2 px-2 text-right text-gray-900">{totalEstimatedMaterial.toLocaleString()}</td>
+                <td className="py-2 px-2 text-right text-gray-900">{totalEstimatedLabor.toLocaleString()}</td>
+                <td className="py-2 px-2 text-right text-gray-900">{totalEstimated.toLocaleString()}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      {/* 실제 비용 테이블 */}
+      <div>
+        <h3 className="text-base font-bold text-gray-900 mb-3">실제 비용</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-300">
+                <th className="text-left py-2 px-2 font-semibold text-gray-700">작업</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-700">자재비</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-700">시공비</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-700">합계</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.map(task => {
+                const actualMaterial = task.actualMaterialCost || 0;
+                const actualLabor = task.actualLaborCost || 0;
+                const actualTotal = actualMaterial + actualLabor;
+
+                return (
+                  <tr key={task.id} className="border-b border-gray-200">
+                    <td className="py-2 px-2 text-gray-800">{task.title}</td>
+                    <td className="py-2 px-2 text-right text-gray-600">
+                      {actualMaterial > 0 ? `${actualMaterial.toLocaleString()}` : '-'}
+                    </td>
+                    <td className="py-2 px-2 text-right text-gray-600">
+                      {actualLabor > 0 ? `${actualLabor.toLocaleString()}` : '-'}
+                    </td>
+                    <td className="py-2 px-2 text-right text-gray-900 font-bold">
+                      {actualTotal > 0 ? `${actualTotal.toLocaleString()}` : '-'}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-gray-400 font-bold">
+                <td className="py-2 px-2 text-gray-900">합계</td>
+                <td className="py-2 px-2 text-right text-gray-900">{totalActualMaterial.toLocaleString()}</td>
+                <td className="py-2 px-2 text-right text-gray-900">{totalActualLabor.toLocaleString()}</td>
+                <td className="py-2 px-2 text-right text-gray-900">{totalActual.toLocaleString()}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
   );
